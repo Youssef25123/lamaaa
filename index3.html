@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>My Shop</title>
+<style>
+:root{--bg:#f5f3ef;--card:#fff;--tx:#14213d;--mut:#7a7f8c;--ac:#b8892b;--ac2:#e0b657;--navy:#14213d;--bd:#e7e3da;--ok:#2a9d5c;--no:#d64545;--sh:0 10px 30px rgba(20,33,61,.08);box-sizing:border-box}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1424;--card:#171f35;--tx:#eef0f6;--mut:#8f97ad;--ac:#e0b657;--bd:#2a3350;--sh:0 10px 30px rgba(0,0,0,.45)}}
+:root[data-theme="dark"]{--bg:#0e1424;--card:#171f35;--tx:#eef0f6;--mut:#8f97ad;--ac:#e0b657;--bd:#2a3350;--sh:0 10px 30px rgba(0,0,0,.45)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5;padding-bottom:env(safe-area-inset-bottom,20px)}
+.top{background:linear-gradient(135deg,#0e1a33,#1d2f5a);color:#fff;padding:24px 16px 50px;text-align:center}
+.top h1{margin:0;font-family:Georgia,serif;font-size:clamp(24px,5vw,38px);font-weight:600}
+.top h1 span{color:var(--ac2)}
+.top p{margin:6px 0 0;opacity:.75;font-size:11px;text-transform:uppercase}
+nav{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;max-width:700px;margin:-22px auto 0;background:var(--card);padding:6px;border-radius:99px;box-shadow:var(--sh);position:relative;z-index:10}
+nav button{background:transparent;color:var(--tx);border-radius:99px;padding:8px 14px;font-weight:600;font-size:13px;border:0;cursor:pointer}
+nav button.on{background:var(--navy);color:var(--ac2)}
+@media (prefers-color-scheme:dark){nav button.on{background:var(--ac);color:#14213d}}
+main{max-width:1050px;margin:auto;padding:20px 14px 60px}
+button,input,textarea,select{font:inherit;color:inherit}
+button{background:linear-gradient(135deg,var(--ac),var(--ac2));color:#14213d;border:0;border-radius:10px;padding:10px 16px;cursor:pointer;font-weight:700}
+button:active{transform:scale(.97)}button:disabled{opacity:.5}
+button.ghost{background:transparent;color:var(--tx);border:1px solid var(--bd)}
+button.del{background:var(--no);color:#fff}button.ok{background:var(--ok);color:#fff}
+label{display:block;font-size:13px;font-weight:600;color:var(--mut);margin-top:8px}
+input,textarea,select{width:100%;padding:11px 12px;border:1px solid var(--bd);border-radius:10px;background:var(--bg);margin:4px 0 8px;outline:none}
+input:focus,textarea:focus{border-color:var(--ac)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+h2.sec{font-family:Georgia,serif;font-size:18px;margin:14px 0 8px;padding-bottom:4px;border-bottom:1px solid var(--bd)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:14px}
+@media(min-width:600px){.grid{grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:20px}}
+.card{background:var(--card);border-radius:14px;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--sh)}
+.card .im{aspect-ratio:1;background:var(--bd);overflow:hidden}
+.card img{width:100%;height:100%;object-fit:cover;display:block}
+.card .b{padding:12px;display:flex;flex-direction:column;gap:6px;flex:1}
+.card h3{margin:0;font-size:16px;font-family:Georgia,serif}
+.price{color:var(--ac);font-weight:800;font-size:17px}
+.mut{color:var(--mut);font-size:13px}
+.box{background:var(--card);border-radius:14px;padding:18px;margin-bottom:16px;box-shadow:var(--sh)}
+.box h2{margin:0 0 12px;font-family:Georgia,serif;font-size:20px}
+.hide{display:none!important}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:8px 0;border-bottom:1px solid var(--bd)}
+.row:last-child{border-bottom:0}
+.tag{padding:4px 10px;border-radius:99px;font-size:11px;font-weight:700;color:#fff;background:var(--mut);white-space:nowrap}
+.tag.placed{background:#6c757d}.tag.confirmed{background:#2f6fdb}.tag.shipped{background:#7b3fe4}.tag.out{background:#e8890c}.tag.delivered{background:var(--ok)}.tag.cancelled{background:var(--no)}
+.code{font-family:monospace;font-weight:700;letter-spacing:1px;color:var(--ac)}
+.cols{display:grid;grid-template-columns:1fr;gap:16px}
+@media(min-width:768px){.cols{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:20px}}
+.thumb{width:40px;height:40px;border-radius:6px;object-fit:cover;background:var(--bd);margin-right:8px}
+.tl{display:flex;margin:14px 0 6px;overflow-x:auto;padding-bottom:4px}
+.tl div{flex:1;text-align:center;font-size:10px;color:var(--mut);position:relative;min-width:70px}
+.tl div:before{content:"";display:block;width:14px;height:14px;border-radius:50%;background:var(--bd);margin:0 auto 4px;position:relative;z-index:1}
+.tl div:after{content:"";position:absolute;top:6px;left:-50%;width:100%;height:2px;background:var(--bd)}
+.tl div:first-child:after{display:none}
+.tl div.on{color:var(--tx);font-weight:600}.tl div.on:before,.tl div.on:after{background:var(--ok)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chips button{padding:6px 10px;font-size:12px}
+.sbtn{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.sbtn button{padding:6px 10px;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(5,10,25,.7);display:flex;align-items:center;justify-content:center;padding:16px;z-index:50}
+.modal .box{width:100%;max-width:360px;margin:0;text-align:center}
+.big{font-size:24px;margin:8px 0}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#14213d;color:#fff;padding:10px 18px;border-radius:99px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:60;max-width:90%;font-size:13px;text-align:center}
+#toast.on{opacity:1}
+</style>
+</head>
+<body>
+<div class="top"><h1>MY <span>SHOP</span></h1><p>Online Live Store</p><p id="net" style="margin-top:6px;font-size:12px;opacity:1">● Connecting...</p></div>
+<nav>
+  <button onclick="switchView('shop')" id="nav-shop" class="on">Shop</button>
+  <button onclick="switchView('cart')" id="nav-cart">Cart (<span id="cc">0</span>)</button>
+  <button onclick="switchView('mine')" id="nav-mine">My orders</button>
+  <button onclick="switchView('admin')" id="nav-admin" class="lock">🔒 Admin</button>
+  <button onclick="switchView('orders')" id="nav-orders" class="lock">🔒 Orders <span id="oc"></span></button>
+</nav>
+<main>
+  <div id="msg" class="box hide"></div>
+  <section id="v-shop"><div class="grid" id="grid"></div><p class="mut" id="empty" style="text-align:center;margin-top:20px"></p></section>
+
+  <section id="v-cart" class="hide cols">
+    <div class="box">
+      <h2>Your cart</h2>
+      <div id="cartList"></div>
+      <div class="row" style="margin-top:8px"><span>Delivery Fee</span><span>80.00 EGP</span></div>
+      <h3>Total: <span id="total">0.00</span> EGP</h3>
+    </div>
+    <div class="box">
+      <h2>Checkout</h2>
+      <div class="f"><label>Full name *</label><input id="cName"></div>
+      <div class="f"><label>Phone number *</label><input id="cPhone" type="tel"></div>
+      <div class="f"><label>Email (Optional)</label><input id="cEmail" type="email"></div>
+      <h2 class="sec">Delivery address</h2>
+      <div class="g2">
+        <div class="f"><label>City *</label><input id="cCity"></div>
+        <div class="f"><label>Street *</label><input id="cStreet"></div>
+        <div class="f"><label>Bldg Name</label><input id="cBName"></div>
+        <div class="f"><label>Bldg No *</label><input id="cBNo"></div>
+        <div class="f"><label>Floor *</label><input id="cFloor"></div>
+        <div class="f"><label>Apt *</label><input id="cApt"></div>
+      </div>
+      <div class="f"><label>Delivery Notes</label><input id="cNotes" placeholder="Landmark, etc."></div>
+      <div class="f"><label>Payment Method *</label>
+        <select id="cPay" onchange="togglePayProof()">
+          <option value="cod">Cash on Delivery (COD)</option>
+          <option value="wallet">Vodafone Cash / InstaPay</option>
+        </select>
+      </div>
+      <div class="f hide" id="proofBox">
+        <label>Upload Payment Screenshot *</label>
+        <input id="cProof" type="file" accept="image/*">
+      </div>
+      <button id="orderBtn" onclick="placeOrder()" style="width:100%;margin-top:10px">Place order</button>
+    </div>
+  </section>
+
+  <section id="v-mine" class="hide">
+    <div class="box"><h2>Track an order</h2><div style="display:flex;gap:8px"><input id="tCode" placeholder="ORD-1001" style="margin:0"><button onclick="trackCode()">Track</button></div></div>
+    <div id="mineList"></div>
+  </section>
+
+  <section id="v-admin" class="hide">
+    <div class="cols">
+      <div class="box">
+        <h2>Add item</h2>
+        <div class="f"><label>Name *</label><input id="pName"></div>
+        <div class="f"><label>Price *</label><input id="pPrice" type="number" step="0.01"></div>
+        <div class="f"><label>Description</label><textarea id="pDesc" rows="2"></textarea></div>
+        <div class="f"><label>Image</label><input id="pImg" type="file" accept="image/*"></div>
+        <button id="addBtn" onclick="addItem()" style="width:100%;margin-top:6px">Add item</button>
+      </div>
+      <div class="box">
+        <h2>Security & Password</h2>
+        <div class="f"><label>Current Password</label><input id="oldPw" type="password"></div>
+        <div class="f"><label>New Password</label><input id="newPw" type="password"></div>
+        <button onclick="changePw()" style="width:100%;margin-top:6px">Update Password</button>
+        <p style="margin-top:10px"><button class="ghost" onclick="lockAdmin()" style="width:100%">Lock admin now</button></p>
+      </div>
+    </div>
+    <div class="box"><h2>Items Management</h2><div id="adminList"></div></div>
+  </section>
+
+  <section id="v-orders" class="hide">
+    <input id="oSearch" placeholder="Search orders..." oninput="renderOrders()" style="margin-bottom:10px">
+    <div class="chips" id="chips"></div>
+    <div id="orderList"></div>
+  </section>
+</main>
+
+<div id="login" class="modal hide">
+  <div class="box">
+    <h2>🔒 Admin Login</h2>
+    <div class="f"><input id="loginPw" type="password" placeholder="Password" onkeydown="if(event.key==='Enter')doLogin()"></div>
+    <div id="lockMsg" class="mut" style="color:var(--no);margin-bottom:8px"></div>
+    <button onclick="doLogin()" style="width:100%">Unlock</button>
+    <p style="margin:8px 0 0"><button class="ghost" onclick="closeModal('login')" style="width:100%">Cancel</button></p>
+    <p style="margin:6px 0 0"><button class="ghost" onclick="showForgot()" style="width:100%">Forgot Password?</button></p>
+  </div>
+</div>
+
+<div id="done" class="modal hide">
+  <div class="box">
+    <h2>🎉 Order Placed!</h2><p class="mut">Your tracking code:</p>
+    <div class="big code" id="doneCode"></div>
+    <button onclick="copyCode()" style="width:100%;margin-bottom:6px">Copy Code</button>
+    <button class="ghost" onclick="goToTrack()" style="width:100%">Track Order</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged, updatePassword, reauthenticateWithCredential, EmailAuthProvider, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+  import { getDatabase, ref, onValue, set, get, push, remove, update, runTransaction } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-database.js";
+
+  const ADMIN_EMAIL = "youssefkhaledyoussef869@gmail.com";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBtRCjNPB5y9iuSW2FmyirL_ufxJ8DXfkM",
+    authDomain: "e-com-28d65.firebaseapp.com",
+    databaseURL: "https://e-com-28d65-default-rtdb.europe-west1.firebasedatabase.app",
+    projectId: "e-com-28d65",
+    storageBucket: "e-com-28d65.firebasestorage.app",
+    messagingSenderId: "742284366006",
+    appId: "1:742284366006:web:7542880d63016211095617"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getDatabase(app);
+
+  const $ = i => document.getElementById(i);
+  const STEPS = [['placed','Placed'],['confirmed','Confirmed'],['shipped','Shipped'],['out','Out for delivery'],['delivered','Delivered']];
+  const LABEL = {placed:'Placed',confirmed:'Confirmed',shipped:'Shipped',out:'Out for delivery',delivered:'Delivered',cancelled:'Cancelled'};
+  let products = [], orders = [], mine = {}, cart = {}, filter = 'all', lastCode = '', isAdmin = false, pending = 'shop';
+  let failCount = parseInt(localStorage.getItem('failCount') || '0');
+  let lockUntil = parseInt(localStorage.getItem('lockUntil') || '0');
+
+  const st = o => o.status || 'placed';
+  const esc = s => { const d = document.createElement('div'); d.textContent = s == null ? '' : String(s); return d.innerHTML; };
+  const money = n => Number(n || 0).toFixed(2);
+  // تم إصلاح دالة val لتجنب الأخطاء إذا كان العنصر غير موجود
+  const val = id => { const el = $(id); return el ? el.value.trim() : ''; };
+
+  function toast(t) {
+    const e = $('toast');
+    if (!e) return;
+    e.textContent = t;
+    e.classList.add('on');
+    clearTimeout(toast.t);
+    toast.t = setTimeout(() => e.classList.remove('on'), 3000);
+  }
+
+  window.openModal = function(id) { const m = $(id); if (m) m.classList.remove('hide'); };
+  window.closeModal = function(id) { const m = $(id); if (m) m.classList.add('hide'); };
+
+  window.switchView = function(v) {
+    if ((v === 'admin' || v === 'orders') && !isAdmin) {
+      pending = v;
+      $('loginPw').value = '';
+      checkLockout();
+      openModal('login');
+      return;
+    }
+    ['shop', 'cart', 'mine', 'admin', 'orders'].forEach(x => {
+      const sec = $('v-' + x);
+      if (sec) sec.classList.toggle('hide', x !== v);
+      const nb = $('nav-' + x);
+      if (nb) nb.classList.toggle('on', x === v);
+    });
+  };
+
+  function checkLockout() {
+    const now = Date.now();
+    if (now < lockUntil) {
+      const left = Math.ceil((lockUntil - now) / 1000);
+      const lm = $('lockMsg');
+      if (lm) lm.textContent = `Locked! Try again in ${left}s`;
+      setTimeout(checkLockout, 1000);
+    } else {
+      const lm = $('lockMsg');
+      if (lm) lm.textContent = '';
+    }
+  }
+
+  window.doLogin = async function() {
+    const now = Date.now();
+    if (now < lockUntil) { toast('Locked due to multiple failed attempts'); return; }
+    const pw = $('loginPw').value;
+    if (!pw) { toast('Please enter password'); return; }
+    try {
+      await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pw);
+      isAdmin = true;
+      failCount = 0;
+      localStorage.setItem('failCount', '0');
+      closeModal('login');
+      window.switchView(pending);
+      toast('Unlocked ✅');
+    } catch (e) {
+      failCount++;
+      localStorage.setItem('failCount', failCount);
+      if (failCount >= 3) {
+        lockUntil = Date.now() + 60000;
+        localStorage.setItem('lockUntil', lockUntil);
+        failCount = 0;
+        localStorage.setItem('failCount', '0');
+        checkLockout();
+        toast('Too many failed attempts. Locked for 1 minute.');
+      } else {
+        toast(`Wrong password! Attempt ${failCount}/3`);
+      }
+    }
+  };
+
+  window.showForgot = async function() {
+    try {
+      await sendPasswordResetEmail(auth, ADMIN_EMAIL);
+      toast('Reset link sent to your email 📧 (check Spam too)');
+    } catch (e) {
+      console.error(e);
+      toast('Reset failed: ' + (e.code || e.message));
+    }
+  };
+
+  window.lockAdmin = async function() {
+    try { await signOut(auth); } catch (e) {}
+    isAdmin = false;
+    renderOrders();
+    window.switchView('shop');
+    toast('Locked 🔒');
+  };
+
+  window.changePw = async function() {
+    const o = $('oldPw').value, n = $('newPw').value;
+    if (n.length < 6) return toast('New password must be 6+ characters');
+    try {
+      const u = auth.currentUser;
+      await reauthenticateWithCredential(u, EmailAuthProvider.credential(ADMIN_EMAIL, o));
+      await updatePassword(u, n);
+      $('oldPw').value = $('newPw').value = '';
+      toast('Password changed ✅');
+    } catch (e) {
+      toast('Error updating password: ' + (e.message || 'Check current password'));
+    }
+  };
+
+  let ordersUnsub = null;
+  onAuthStateChanged(auth, u => {
+    isAdmin = !!u && u.email === ADMIN_EMAIL;
+    if (ordersUnsub) { ordersUnsub(); ordersUnsub = null; }
+    if (isAdmin) {
+      ordersUnsub = onValue(ref(db, 'orders'), s => {
+        orders = Object.values(s.val() || {}).sort((a, b) => b.at - a.at);
+        renderOrders();
+      }, err => {
+        console.error(err);
+        toast('Error loading orders: ' + err.message);
+      });
+    } else {
+      orders = [];
+      if (u && u.email !== ADMIN_EMAIL) signOut(auth);
+      ['admin', 'orders'].forEach(x => {
+        const e = $('v-' + x);
+        if (e && !e.classList.contains('hide')) window.switchView('shop');
+      });
+    }
+    renderOrders();
+  });
+
+  const saved = () => { try { return JSON.parse(localStorage.getItem('shopCodes') || '[]'); } catch (e) { return []; } };
+  const subs = {};
+  function watch(code) {
+    if (subs[code]) return;
+    subs[code] = onValue(ref(db, 'tracking/' + code), s => {
+      if (s.exists()) mine[code] = s.val();
+      else delete mine[code];
+      renderMine();
+    });
+  }
+  function remember(code) {
+    const l = saved();
+    if (!l.includes(code)) {
+      l.push(code);
+      localStorage.setItem('shopCodes', JSON.stringify(l));
+    }
+    watch(code);
+  }
+
+  window.trackCode = async function() {
+    const c = $('tCode').value.trim().toUpperCase();
+    if (!c) return;
+    try {
+      const s = await get(ref(db, 'tracking/' + c));
+      if (s.exists()) {
+        remember(c);
+        $('tCode').value = '';
+        toast('Order added ✅');
+      } else {
+        toast('Order not found');
+      }
+    } catch (e) {
+      toast('Error tracking order');
+    }
+  };
+
+  function renderShop() {
+    const grid = $('grid');
+    if (!grid) return;
+    grid.innerHTML = products.map(p => `<div class="card"><div class="im">${p.img ? `<img src="${esc(p.img)}">` : ''}</div><div class="b"><h3>${esc(p.name)}</h3><span class="mut">${esc(p.desc)}</span><span class="price">${money(p.price)} EGP</span><button onclick="addCart('${p.id}')">Add to cart</button></div></div>`).join('');
+    const em = $('empty');
+    if (em) em.textContent = products.length ? '' : 'No items available yet.';
+    const al = $('adminList');
+    if (al) al.innerHTML = products.map(p => `<div class="row"><span style="display:flex;align-items:center">${p.img ? `<img class="thumb" src="${esc(p.img)}">` : ''}${esc(p.name)} — ${money(p.price)} EGP</span><button class="del" onclick="delItem('${p.id}')">Delete</button></div>`).join('') || '<p class="mut">No items.</p>';
+  }
+
+  function renderCart() {
+    // تنظيف السلة من المنتجات المحذوفة تلقائياً
+    Object.keys(cart).forEach(id => {
+      if (!products.some(p => p.id === id)) delete cart[id];
+    });
+    const ids = Object.keys(cart);
+    let sub = 0, n = 0;
+    const cl = $('cartList');
+    if (cl) cl.innerHTML = ids.map(id => {
+      const p = products.find(x => x.id === id), q = cart[id];
+      sub += p.price * q;
+      n += q;
+      return `<div class="row"><span>${esc(p.name)} × ${q}</span><span>${money(p.price * q)} <button class="ghost" onclick="rmCart('${id}')">✕</button></span></div>`;
+    }).join('') || '<p class="mut">Cart is empty.</p>';
+    const total = sub > 0 ? sub + 80 : 0;
+    const tot = $('total');
+    if (tot) tot.textContent = money(total);
+    const cc = $('cc');
+    if (cc) cc.textContent = n;
+  }
+
+  window.togglePayProof = function() {
+    const isWallet = $('cPay').value === 'wallet';
+    const pb = $('proofBox');
+    if (pb) pb.classList.toggle('hide', !isWallet);
+  };
+
+  const itemsHtml = (o) => (o.items || []).map(i => `<div class="row"><span>${esc(i.name)} × ${i.qty}</span><span>${money(i.price * i.qty)}</span></div>`).join('');
+  function timeline(o) {
+    const s = st(o);
+    if (s === 'cancelled') return '<p><span class="tag cancelled">Cancelled</span></p>';
+    const idx = STEPS.findIndex(x => x[0] === s);
+    return `<div class="tl">${STEPS.map((x, i) => `<div class="${i <= idx ? 'on' : ''}">${x[1]}</div>`).join('')}</div>`;
+  }
+
+  function renderMine() {
+    const l = Object.values(mine).sort((a, b) => b.at - a.at);
+    const ml = $('mineList');
+    if (!ml) return;
+    ml.innerHTML = l.map(o => `<div class="box"><div class="row"><span class="code">${esc(o.code)}</span><span class="tag ${st(o)}">${LABEL[st(o)]}</span></div>${timeline(o)}<p class="mut">${new Date(o.at).toLocaleString()}</p>${itemsHtml(o)}<p class="mut">Delivery Fee: 80.00 EGP</p><p><b>Total: ${money(o.total)} EGP</b></p></div>`).join('') || '<p class="mut" style="text-align:center">No orders tracked.</p>';
+  }
+
+  window.setFilter = function(k) { filter = k; renderOrders(); };
+  window.renderOrders = function() {
+    const open = orders.filter(o => st(o) === 'placed').length;
+    const oc = $('oc');
+    if (oc) oc.textContent = open ? '(' + open + ')' : '';
+    if (!isAdmin) { const ol = $('orderList'); if (ol) ol.innerHTML = ''; return; }
+    const chips = $('chips');
+    if (chips) chips.innerHTML = ['all', 'placed', 'confirmed', 'shipped', 'out', 'delivered', 'cancelled'].map(k => {
+      const n = k === 'all' ? orders.length : orders.filter(o => st(o) === k).length;
+      return `<button class="${filter === k ? '' : 'ghost'}" onclick="setFilter('${k}')">${k === 'all' ? 'All' : LABEL[k]} (${n})</button>`;
+    }).join('');
+    const qEl = $('oSearch'), q = qEl ? qEl.value.trim().toLowerCase() : '';
+    const list = orders.filter(o => (filter === 'all' || st(o) === filter) && (!q || (o.code + o.name + o.phone).toLowerCase().includes(q)));
+    const orderList = $('orderList');
+    if (orderList) orderList.innerHTML = list.map(o => {
+      const s = st(o), a = o.addr || {};
+      const fullAddr = `${a.city || ''}, ${a.street || ''}, Bldg: ${a.bName || '-'}, No: ${a.bNo || ''}, Floor: ${a.floor || ''}, Apt: ${a.apt || ''}` + (a.notes ? ` | Notes: ${a.notes}` : '');
+      return `<div class="box"><div class="row"><span class="code">${esc(o.code)}</span><span class="tag ${s}">${LABEL[s]}</span></div>
+      <p><b>${esc(o.name)}</b><br><span class="mut">📞 ${esc(o.phone)} ${o.email ? '· ✉️ ' + esc(o.email) : ''}</span><br>📍 <b>Address:</b> ${esc(fullAddr)}<br><span class="mut">💳 Payment: ${o.pay === 'wallet' ? 'Digital Wallet / InstaPay' : 'Cash on Delivery'}</span></p>
+      ${o.proof ? `<p><b>Payment Screenshot:</b><br><a href="${esc(o.proof)}" target="_blank" rel="noopener"><img src="${esc(o.proof)}" style="max-width:120px;border-radius:8px;margin-top:6px"></a></p>` : ''}
+      ${itemsHtml(o)}<p class="mut">Delivery Fee: 80.00 EGP</p><p><b>Total: ${money(o.total)} EGP</b></p><div class="sbtn">
+      ${STEPS.map(x => `<button class="${s === x[0] ? 'ok' : 'ghost'}" onclick="setStatus('${o.code}','${x[0]}')">${x[1]}</button>`).join('')}
+      <button class="${s === 'cancelled' ? 'del' : 'ghost'}" onclick="setStatus('${o.code}','cancelled')">Cancel</button><button class="del" onclick="delOrder('${o.code}')">🗑</button></div></div>`;
+    }).join('') || '<p class="mut" style="text-align:center">No orders.</p>';
+  };
+
+  window.addCart = function(id) { cart[id] = (cart[id] || 0) + 1; renderCart(); toast('Added to cart 🛒'); };
+  window.rmCart = function(id) { delete cart[id]; renderCart(); };
+
+  function resize(file) {
+    return new Promise((res, rej) => {
+      const img = new Image(), u = URL.createObjectURL(file);
+      img.onload = () => {
+        const k = Math.min(1, 600 / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * k);
+        c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        URL.revokeObjectURL(u);
+        res(c.toDataURL('image/jpeg', .75));
+      };
+      img.onerror = rej;
+      img.src = u;
+    });
+  }
+
+  window.placeOrder = async function() {
+    const its = Object.keys(cart).map(id => {
+      const p = products.find(x => x.id === id);
+      return p && { name: p.name, price: p.price, qty: cart[id] };
+    }).filter(Boolean);
+
+    if (!its.length) return toast('Cart is empty');
+    if (!val('cName') || !val('cPhone') || !val('cCity') || !val('cStreet') || !val('cBNo') || !val('cFloor') || !val('cApt')) {
+      return toast('Please fill all required fields (*)');
+    }
+
+    const isWallet = $('cPay').value === 'wallet';
+    let proof = '';
+    if (isWallet) {
+      const f = $('cProof').files[0];
+      if (!f) return toast('Please upload payment screenshot');
+      proof = await resize(f);
+    }
+
+    const btn = $('orderBtn');
+    btn.disabled = true;
+    try {
+      const tx = await runTransaction(ref(db, 'counter'), c => (c || 0) + 1);
+      const code = 'ORD-' + (1000 + tx.snapshot.val()), at = Date.now();
+      const subTotal = its.reduce((s, i) => s + i.price * i.qty, 0);
+      const total = subTotal + 80;
+      const addr = {
+        city: val('cCity'),
+        street: val('cStreet'),
+        bName: val('cBName'),
+        bNo: val('cBNo'),
+        floor: val('cFloor'),
+        apt: val('cApt'),
+        notes: val('cNotes')
+      };
+      const orderData = { code, name: val('cName'), phone: val('cPhone'), email: val('cEmail'), addr, pay: $('cPay').value, proof, items: its, total, status: 'placed', at };
+
+      await set(ref(db, 'orders/' + code), orderData);
+      await set(ref(db, 'tracking/' + code), { code, status: 'placed', total, at, items: its.map(i => ({ name: i.name, price: i.price, qty: i.qty })) });
+
+      remember(code);
+      cart = {};
+      renderCart();
+
+      ['cNotes', 'cBName', 'cApt', 'cFloor', 'cBNo', 'cCity', 'cStreet', 'cName', 'cPhone', 'cEmail', 'cProof'].forEach(i => {
+        if ($(i)) $(i).value = '';
+      });
+      $('cPay').value = 'cod';
+      togglePayProof();
+
+      lastCode = code;
+      const dc = $('doneCode');
+      if (dc) dc.textContent = code;
+      openModal('done');
+    } catch (e) {
+      console.error(e);
+      toast('Error placing order: ' + (e.code || e.message));
+    }
+    btn.disabled = false;
+  };
+
+  window.copyCode = function() {
+    try {
+      navigator.clipboard.writeText(lastCode);
+      toast('Copied ✅');
+    } catch (e) { toast(lastCode); }
+  };
+
+  window.goToTrack = function() {
+    closeModal('done');
+    window.switchView('mine');
+  };
+
+  window.addItem = async function() {
+    const name = val('pName'), price = parseFloat($('pPrice').value);
+    if (!name || isNaN(price)) return toast('Enter name and price');
+    const btn = $('addBtn');
+    btn.disabled = true;
+    try {
+      const f = $('pImg').files[0], img = f ? await resize(f) : '';
+      await set(push(ref(db, 'products')), { name, price, desc: val('pDesc'), img, at: Date.now() });
+      ['pName', 'pPrice', 'pDesc', 'pImg'].forEach(i => { if ($(i)) $(i).value = ''; });
+      toast('Item added ✅');
+    } catch (e) {
+      console.error(e);
+      toast('Error adding item: ' + (e.code || e.message));
+    }
+    btn.disabled = false;
+  };
+
+  window.delItem = async function(id) {
+    if (confirm('Delete this item?')) {
+      try {
+        await remove(ref(db, 'products/' + id));
+        toast('Item deleted');
+      } catch (e) {
+        toast('Error deleting item: ' + e.message);
+      }
+    }
+  };
+
+  window.setStatus = async function(code, s) {
+    try {
+      await update(ref(db), { ['orders/' + code + '/status']: s, ['tracking/' + code + '/status']: s });
+      toast('Status updated ✅');
+    } catch (e) {
+      toast('Error updating status');
+    }
+  };
+
+  window.delOrder = async function(code) {
+    if (confirm('Delete order permanently?')) {
+      try {
+        await update(ref(db), { ['orders/' + code]: null, ['tracking/' + code]: null });
+        toast('Order deleted');
+      } catch (e) {
+        toast('Error deleting order');
+      }
+    }
+  };
+
+  onValue(ref(db, 'products'), s => {
+    const v = s.val() || {};
+    products = Object.keys(v).map(k => Object.assign({ id: k }, v[k])).sort((a, b) => b.at - a.at);
+    renderShop();
+    renderCart();
+  }, e => {
+    console.error(e);
+    toast('Database error: ' + (e.code || e.message));
+  });
+
+  saved().forEach(watch);
+
+  let online = false;
+  onValue(ref(db, '.info/connected'), x => {
+    online = x.val() === true;
+    const n = $('net');
+    if (n) {
+      n.textContent = online ? '● Live & Connected' : '● Offline';
+      n.style.color = online ? '#7ee2a8' : '#ff8f8f';
+    }
+  });
+</script>
+</body>
+</html>
